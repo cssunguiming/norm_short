@@ -198,14 +198,14 @@ def main(Epoch=400, Bert_Pretrain=False, Pretrained=False, Batch_size=10, log='p
 
     if Bert_Pretrain:
         print("Loaded Pretrained Bert")      
-        Bert = Bert_Traj_Model(token_size=len(dataset_4qs['vid_list']), head_n=10, d_model=300, N_layers=10, dropout=0.5)
+        Bert = Bert_Traj_Model(token_size=len(dataset_4qs['vid_list']), head_n=8, d_model=240, N_layers=8, dropout=0.5)
         Bert.load_state_dict(torch.load('./pretrain/bert_trained_ep14.pth')) 
     else: 
         print("Create New Bert")      
-        Bert = Bert_Traj_Model(token_size=len(dataset_4qs['vid_list']), head_n=10, d_model=300, N_layers=10, dropout=0.5)
+        Bert = Bert_Traj_Model(token_size=len(dataset_4qs['vid_list']), head_n=8, d_model=240, N_layers=8, dropout=0.5)
 
     print("Get Predict Model")
-    model = Predict_Model(Bert, token_size=len(dataset_4qs['vid_list']), head_n=10, d_model=300, N_layers=10, dropout=0.5) 
+    model = Predict_Model(Bert, token_size=len(dataset_4qs['vid_list']), head_n=8, d_model=240, N_layers=8, dropout=0.5) 
     if Pretrained:
         print("Load Pretrained Predict Model")
         model.load_state_dict(torch.load('./pretrain/Predict_model_trained_ep48.pth'))
