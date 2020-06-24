@@ -50,9 +50,9 @@ def predict_train_epoch(epoch, model, train_data, train_queue, optimizer, device
         user = torch.from_numpy(np.array([u for u, _ in batch_queue])).to(device).long()
         # len_traj = torch.from_numpy(np.array([train_data[u][id]['len_traj'] for u, id in batch_queue])).to(device).long()
 
-        place_logit, time_logit = model(loc, time, user)
+        place_logit = model(loc, time, user)
 
-        loss, n_loc, n_cor_loc, n_cor_time = cal_loss_performance(logit1=place_logit, logit2=time_logit, label1=loc_label, label2=time_label, Predict=True)
+        loss, n_loc, n_cor_loc, n_cor_time = cal_loss_performance(logit1=place_logit, label1=loc_label, Predict=True)
         eva_metric = get_acc(loc_label, place_logit, eva_metric)
 
         total_loss += loss.item()
@@ -108,9 +108,9 @@ def predict_valid_epoch(epoch, model, valid_data, valid_queue, optimizer, device
             user = torch.from_numpy(np.array([u for u, _ in batch_queue])).to(device).long()
             
             
-            place_logit, time_logit = model(loc, time, user)
+            place_logit = model(loc, time, user)
 
-            loss, n_loc, n_cor_loc, n_cor_time = cal_loss_performance(logit1=place_logit, logit2=time_logit, label1=loc_label, label2=time_label, Predict=True)
+            loss, n_loc, n_cor_loc, n_cor_time = cal_loss_performance(logit1=place_logit, label1=loc_label, Predict=True)
             eva_metric = get_acc(loc_label, place_logit, eva_metric)
 
             total_loss += loss.item()

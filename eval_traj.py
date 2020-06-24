@@ -2,35 +2,34 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 
-def cal_loss_performance(logit1=None, logit2=None, label1=None, label2=None, Predict=False):
+def cal_loss_performance(logit1=None, logit2=None, label1=None, label2=None, Predict=False, smoothing=True):
 
     if Predict:
         n = (label1.ne(0)).sum().item()
 
-        loss_place = F.cross_entropy(logit1, label1, reduction='mean', ignore_index=0)
+
         n_cor = (label1.ne(0) * label1.eq(logit1.argmax(-1))).sum().item()
 
-        loss_time = F.cross_entropy(logit2, label2, reduction='mean', ignore_index=0)
-        n_time_cor = (label1.ne(0) * label2.eq(logit2.argmax(-1))).sum().item()
+        # loss_time = F.cross_entropy(logit2, label2, reduction='mean', ignore_index=0)
+        # n_time_cor = (label1.ne(0) * label2.eq(logit2.argmax(-1))).sum().item()
 
-        # a1 = logit1.argmax(-1)
-        # a2 = label1
-        # length = len(a1)
-        # b = []
-        # for i in range(length):
-        #     b.append((a1[i].item(), a2[i].item()))
+        if smoothing:
+            eps = 0.1
+            n_class = logit1.size(1)
 
-        # print(b)
-        # print("logit1:\n",logit1.argmax(-1))
-        # print(''"label1:\n",label1)
-        # print("n_cor:{}, n_total:{}".format(n_cor, n))
-        # print("exit in cal loss")
-        # exit()
+            one_hot = torch.zeros_like(logit1).scatter(1, label1.view(-1, 1), 1)
+            one_hot = one_hot * (1 - eps) + (1 - one_hot) * eps / (n_class - 1)
+            log_prb = F.log_softmax(logit1, dim=1)
 
-        # loss = loss_place + loss_time
+            non_pad_mask = label1.ne(0)
+            loss_place = -(one_hot * log_prb).sum(dim=1)
+            loss_place = loss_place.masked_select(non_pad_mask).sum()  # average later
+        else:
+            loss_place = F.cross_entropy(logit1, label1, reduction='mean', ignore_index=0)
+        
         loss = loss_place
 
-        return loss, n, n_cor, n_time_cor
+        return loss, n, n_cor, 0
     else:
         loss_next = F.cross_entropy(logit1, label1, reduction='mean')
         loss_masked = F.cross_entropy(logit2, label2, reduction='mean', ignore_index=0)

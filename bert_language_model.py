@@ -37,7 +37,7 @@ class Predict_Model(nn.Module):
         self.bert = Bert_Traj_Model
 
         self.place_Linear = nn.Linear(d_model, token_size)
-        self.time_Linear = nn.Linear(d_model, 49)
+        # self.time_Linear = nn.Linear(d_model, 49)
 
         # self.place_Linear.weight = Bert_Traj_Model.Embed.token_embed.token_embed.weight
         # self.time_Linear.weight = Bert_Traj_Model.Embed.token_embed.time_embed.weight
@@ -49,8 +49,8 @@ class Predict_Model(nn.Module):
     def forward(self, x, time, user):
         x = self.bert(x, time, user)
         logit1 = self.place_Linear(x)
-        logit2 = self.time_Linear(x)
-        return logit1.view(-1, logit1.size(-1)), logit2.view(-1, logit2.size(-1))
+        # logit2 = self.time_Linear(x) , logit2.view(-1, logit2.size(-1))
+        return logit1.view(-1, logit1.size(-1))
 
 
 class BertLM(nn.Module):
