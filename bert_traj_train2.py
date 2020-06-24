@@ -182,7 +182,8 @@ def run(epoch, model, optimizer, device, train_data, train_traj_idx, valid_data,
             # writer.add_scalars("Lr", {"Train": optimizer._print_lr()}, epoch_i)
 
 
-def main(Epoch=400, Bert_Pretrain=False, Pretrained=False, Batch_size=10, log=None):
+def main(Epoch=400, Bert_Pretrain=False, Pretrained=False, Batch_size=10, log='predict'):
+    # main(Epoch=50, Bert_Pretrain=False, Batch_size=4, Pretrained=False, log='predict')
 
     print('*'*150)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -220,7 +221,7 @@ def main(Epoch=400, Bert_Pretrain=False, Pretrained=False, Batch_size=10, log=No
     run(Epoch, model, optimizer, device, train_data, train_traj_idx, test_data, test_traj_idx, log, Batch_size)
 
 if __name__ == "__main__":
-    main(Epoch=50, Bert_Pretrain=False, Batch_size=4, Pretrained=False, log='predict')
+    main()
     pass
 
 
