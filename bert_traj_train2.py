@@ -184,6 +184,10 @@ def run(epoch, model, optimizer, device, train_data, train_traj_idx, valid_data,
 
 def main(Epoch=400, Bert_Pretrain=False, Pretrained=False, Batch_size=10, log='predict'):
     # main(Epoch=50, Bert_Pretrain=False, Batch_size=4, Pretrained=False, log='predict')
+    head_n = 4
+    d_model = 240
+    N_layers = 2
+    dropout = 0.5
 
     print('*'*150)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -198,14 +202,14 @@ def main(Epoch=400, Bert_Pretrain=False, Pretrained=False, Batch_size=10, log='p
 
     if Bert_Pretrain:
         print("Loaded Pretrained Bert")      
-        Bert = Bert_Traj_Model(token_size=len(dataset_4qs['vid_list']), head_n=1, d_model=240, N_layers=6, dropout=0.7)
+        Bert = Bert_Traj_Model(token_size=len(dataset_4qs['vid_list']), head_n=head_n, d_model=d_model, N_layers=N_layers, dropout=dropout)
         Bert.load_state_dict(torch.load('./pretrain/bert_trained_ep14.pth')) 
     else: 
         print("Create New Bert")      
-        Bert = Bert_Traj_Model(token_size=len(dataset_4qs['vid_list']), head_n=1, d_model=128, N_layers=2, dropout=0.7)
+        Bert = Bert_Traj_Model(token_size=len(dataset_4qs['vid_list']), head_n=head_n, d_model=d_model, N_layers=N_layers, dropout=dropout)
 
     print("Get Predict Model")
-    model = Predict_Model(Bert, token_size=len(dataset_4qs['vid_list']), head_n=1, d_model=128, N_layers=2, dropout=0.7) 
+    model = Predict_Model(Bert, token_size=len(dataset_4qs['vid_list']), head_n=head_n, d_model=d_model, N_layers=N_layers, dropout=dropout) 
     if Pretrained:
         print("Load Pretrained Predict Model")
         model.load_state_dict(torch.load('./pretrain/Predict_model_trained_ep48.pth'))
