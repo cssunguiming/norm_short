@@ -27,11 +27,11 @@ def make_std_mask(tgt, pad):
 
 class transformer_layer(nn.Module):
 
-    def __init__(self, size, head_n, d_model, d_ff, dropout=0.1):
+    def __init__(self, size, head_n, d_model, d_ff, Mul_Attn, PositionwiseFeedForward,dropout=0.1):
         super(transformer_layer, self).__init__()
 
-        self.attn =  Mul_Attn(head_n=head_n, d_model=d_model, d_q=int(d_model/head_n), d_k=int(d_model/head_n), d_v=int(d_model/head_n), dropout=0.1)
-        self.feed_forward =  PositionwiseFeedForward(d_model=d_model, d_ff=d_ff, dropout=dropout)
+        self.attn =  Mul_Attn
+        self.feed_forward =  PositionwiseFeedForward
         self.connect1 = SublayerConnection(size=size, dropout=dropout)
         self.connect2 = SublayerConnection(size=size, dropout=dropout)
 
@@ -65,6 +65,9 @@ class Bert_Traj_Model(nn.Module):
     def __init__(self, token_size, user_size=1175, head_n=12, d_model=768, N_layers=12, dropout=0.1):
         super(Bert_Traj_Model, self).__init__()
 
+        self.attn =  Mul_Attn(head_n=head_n, d_model=d_model, d_q=int(d_model/head_n), d_k=int(d_model/head_n), d_v=int(d_model/head_n), dropout=0.1)
+        self.feed_forward =  PositionwiseFeedForward(d_model=d_model, d_ff=d_ff, dropout=dropout)
+
         self.N_layers = N_layers
         user_matrix = Variable(torch.Tensor(user_size, d_model), requires_grad=False)  # 每个Epoch都应该重新初始化
         # user_matrix = torch.Tensor(user_size, d_model)
@@ -72,12 +75,14 @@ class Bert_Traj_Model(nn.Module):
         # self.user_Embed = nn.Embedding(user_size, d_model)
         self.Embed = Bert_Embedding(token_size=token_size, d_model=d_model, dropout=dropout)
         self.trans_layers = nn.ModuleList([copy.deepcopy(
-            transformer_layer(size=d_model, head_n=head_n, d_model=d_model, d_ff=d_model*4, dropout=dropout)) for _ in range(N_layers)])
+            transformer_layer(size=d_model, head_n=head_n, d_model=d_model, d_ff=d_model*4, Mul_Attn=self.attn, PositionwiseFeedForward=self.feed_forward, dropout=dropout)) for _ in range(N_layers)])
         self.layer_norm = LayerNorm(size=d_model)
         self.register_buffer('user_matrix', user_matrix)
         # nn.init.normal_(self.user_matrix)
         self.reset()
         # self.matrix = Memory(user_size=user_size, d_model=d_model)
+
+        
 
     def reset(self):
         """Initialize memory from bias, for start-of-sequence."""
