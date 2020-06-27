@@ -66,7 +66,7 @@ class Bert_Traj_Model(nn.Module):
         super(Bert_Traj_Model, self).__init__()
 
         self.attn =  Mul_Attn(head_n=head_n, d_model=d_model, d_q=int(d_model/head_n), d_k=int(d_model/head_n), d_v=int(d_model/head_n), dropout=0.1)
-        self.feed_forward =  PositionwiseFeedForward(d_model=d_model, d_ff=d_ff, dropout=dropout)
+        self.feed_forward =  PositionwiseFeedForward(d_model=d_model, d_ff=d_model*4, dropout=dropout)
 
         self.N_layers = N_layers
         user_matrix = Variable(torch.Tensor(user_size, d_model), requires_grad=False)  # 每个Epoch都应该重新初始化
