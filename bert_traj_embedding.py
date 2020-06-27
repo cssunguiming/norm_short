@@ -31,14 +31,14 @@ class Token_Embedding(nn.Module):
         super(Token_Embedding, self).__init__()
 
         self.d_model = d_model
-        self.token_embed = nn.Embedding(token_size, d_model, padding_idx=0)
+        self.token_embed = nn.Embedding(token_size, d_model-20, padding_idx=0)
         # self.token_embed = nn.Embedding(token_size, d_model-10, padding_idx=0)
-        self.time_embed = nn.Embedding(49, d_model, padding_idx=0)
+        self.time_embed = nn.Embedding(49, 20, padding_idx=0)
 
     def forward(self, x, time):
         # Embed = self.token_embed(x) + self.time_embed(time)
-        # Embed = torch.cat((self.token_embed(x), self.time_embed(time)), dim=-1)
-        Embed = self.token_embed(x)
+        Embed = torch.cat((self.token_embed(x), self.time_embed(time)), dim=-1)
+        # Embed = self.token_embed(x)
         return Embed * math.sqrt(self.d_model)
 
 class Traj_Embedding(nn.Module):
