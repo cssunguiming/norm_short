@@ -184,9 +184,9 @@ def run(epoch, model, optimizer, device, train_data, train_traj_idx, valid_data,
 
 def main(Epoch=400, Bert_Pretrain=False, Pretrained=False, Batch_size=10, log='predict'):
     # main(Epoch=50, Bert_Pretrain=False, Batch_size=4, Pretrained=False, log='predict')
-    head_n = 4
-    d_model = 240
-    N_layers = 2
+    head_n = 3
+    d_model = 300
+    N_layers = 8
     dropout = 0.5
 
     print('*'*150)
