@@ -65,7 +65,7 @@ class Bert_Traj_Model(nn.Module):
     def __init__(self, token_size, user_size=1175, head_n=12, d_model=768, N_layers=12, dropout=0.1):
         super(Bert_Traj_Model, self).__init__()
 
-        self.attn =  Mul_Attn(head_n=head_n, d_model=d_model, d_q=int(d_model/head_n), d_k=int(d_model/head_n), d_v=int(d_model/head_n), dropout=0.1)
+        self.attn =  Mul_Attn(head_n=head_n, d_model=d_model, d_q=int(d_model/head_n), d_k=int(d_model/head_n), d_v=int(d_model/head_n), dropout=dropout)
         self.feed_forward =  PositionwiseFeedForward(d_model=d_model, d_ff=d_model*4, dropout=dropout)
 
         self.N_layers = N_layers
